@@ -45,27 +45,27 @@ def world_to_audio(f0, sp, ap, sr):
     
     return audio
 
-def pitch_shift(audio, sr, x):
+def pitch_shift(audio, sr, shift):
     """
-    Shift the pitch of the audio by _x_ Hz
+    Shift the pitch of the audio by _shift_ Hz
     """
     f0, sp, ap = audio_to_world(audio, sr)
 
-    f0[f0!=0] += x
+    f0[f0!=0] += shift
 
     audio = world_to_audio(f0, sp, ap, sr)
 
     return audio
 
-def helium_effect(audio, sr, f):
+def helium(audio, sr, factor):
     """
-    Raise the formants of the audio by factor _f_
+    Raise the formants of the audio by factor _factor_
     """
     f0, sp, ap = audio_to_world(audio, sr)
 
     n_rows = sp.shape[-2]
 
-    sp = F.interpolate(sp.unsqueeze(1), size=(int(sp.shape[1]*f), sp.shape[-1])).squeeze(1)
+    sp = F.interpolate(sp.unsqueeze(1), size=(int(sp.shape[1]*factor), sp.shape[-1])).squeeze(1)
 
     if sp.shape[1] > n_rows:
         sp = sp[:, :n_rows, :]
@@ -76,27 +76,16 @@ def helium_effect(audio, sr, f):
 
     return audio
 
-def time_stretch(audio, sr, f):
+def time_stretch(audio, sr, factor):
     """
-    Stretch the duration of the audio by a factor _f_ without changing pitch or formant characteristics
+    Stretch the duration of the audio by a factor _factor_ without changing pitch or formant characteristics
     """
     f0, sp, ap = audio_to_world(audio, sr)
 
-    f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*f),)).squeeze(0)
+    f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*factor),)).squeeze(0)
     sp = F.interpolate(sp, size=(int(sp.shape[-1]*f),))
     ap = F.interpolate(ap, size=(int(ap.shape[-1]*f),))
 
     audio = world_to_audio(f0, sp, ap, sr)
 
     return audio
-
-local_audio_path = "p243_001.wav"
-tempfile_path = "temp_audio.wav"
-
-audio, sr = librosa.load(local_audio_path, sr=None)
-
-audio = pitch_shift(audio, sr=sr, x=50)
-# audio = helium(audio, sr=sr, f=2.3)
-# audio = time_stretch(audio, sr=sr, f=2.3)
-
-sf.write(data=audio, file=tempfile_path, samplerate=sr)
