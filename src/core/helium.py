@@ -65,12 +65,13 @@ def helium(audio, sr, factor):
 
     n_rows = sp.shape[-2]
 
-    sp = F.interpolate(sp.unsqueeze(1), size=(int(sp.shape[1]*factor), sp.shape[-1])).squeeze(1)
+    sp = F.interpolate(sp.unsqueeze(1), size=(int(n_rows*factor), sp.shape[-1])).squeeze(1)
 
-    if sp.shape[1] > n_rows:
+    if sp.shape[-2] > n_rows:
         sp = sp[:, :n_rows, :]
-    if sp.shape[1] < n_rows:
-        sp = torch.cat([sp, torch.zeros(sp.shape[0], n_rows-sp.shape[1], sp.shape[-1]).to(sp.device)], dim=1)
+    if sp.shape[-2] < n_rows:
+        # sp = torch.cat([sp, torch.zeros(sp.shape[0], n_rows-sp.shape[-2], sp.shape[-1]).to(sp.device)], dim=-2) # TODO: WORLD doesn't deal well with absolute zeros
+        sp = torch.cat([sp, torch.min(sp)*torch.ones(sp.shape[0], n_rows - sp.shape[-2], sp.shape[-1]).to(sp.device)], dim=-2)
 
     audio = world_to_audio(f0, sp, ap, sr)
 
@@ -83,8 +84,8 @@ def time_stretch(audio, sr, factor):
     f0, sp, ap = audio_to_world(audio, sr)
 
     f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*factor),)).squeeze(0)
-    sp = F.interpolate(sp, size=(int(sp.shape[-1]*f),))
-    ap = F.interpolate(ap, size=(int(ap.shape[-1]*f),))
+    sp = F.interpolate(sp, size=(int(sp.shape[-1]*factor),))
+    ap = F.interpolate(ap, size=(int(ap.shape[-1]*factor),))
 
     audio = world_to_audio(f0, sp, ap, sr)
 
