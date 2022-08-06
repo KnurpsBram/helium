@@ -1,9 +1,37 @@
 {% extends "extend_me_for_flash_messages.html" %}
 {% block body %}
-<h2>Raise/lower the formants (resonance frequencies) of your voice, without changing the pitch!</h2>
-<form method="post" enctype="multipart/form-data">
+<h1> Welcome to the Helium Web App! </h1>
+It's a misconception that helium raises the pitch of your voice. 
+It actually changes the speed of sound through the air. 
+Your vocal cords create the same pitch, but the air in your mouth resonates at different frequencies!
+With this little webapp you can play with changing the pitch and formants of your voice independently (those resonance frequencies are called 'formants')
+<h2> Try it out !</h2>
+<!-- <form method="post" enctype="multipart/form-data">
    Choose file: <input type="file" name="file"/><br>
-   Choose formant multiplication factor: <input type="text" name="factor" value="2.97" size="5"><br>  
-   <input type="submit" value="Helium!" />
-</form>
+   Change formants: <input type="text" name="factor" value="2.3" size="5"><br>  
+   Change pitch:    <input type="text" name="factor" value="1.0" size="5"><br>  
+   Change duration: <input type="text" name="factor" value="1.8" size="5"><br>  
+   <input type="submit" value="Modify Audio!" />
+</form> -->
+<form>
+   <table>
+      <tr>
+         <td align="left">Choose file:</td>
+         <td align="left"><input type="file" name="file"></td>
+      </tr>
+      <tr>
+         <td align="left">Change formants:</td>
+         <td align="left"><input type="text" name="factor" value="2.3" size="5"></td>
+      </tr>
+      <tr>
+         <td align="left">Change pitch:</td>
+         <td align="left"><input type="text" name="factor" value="1.0" size="5"></td>
+      </tr>
+      <tr>
+         <td align="left">Change duration:</td>
+         <td align="left"><input type="text" name="factor" value="1.8" size="5"></td>
+      </tr>
+         <td align="left"><input type="submit" value="Let's go!"></td>     
+   </table>
+ </form>
 {% endblock %}

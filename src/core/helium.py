@@ -45,24 +45,10 @@ def world_to_audio(f0, sp, ap, sr):
     
     return audio
 
-def pitch_shift(audio, sr, shift):
-    """
-    Shift the pitch of the audio by _shift_ Hz
-    """
-    f0, sp, ap = audio_to_world(audio, sr)
-
-    f0[f0!=0] += shift
-
-    audio = world_to_audio(f0, sp, ap, sr)
-
-    return audio
-
-def helium(audio, sr, factor):
+def helium(sp, factor):
     """
     Raise the formants of the audio by factor _factor_
     """
-    f0, sp, ap = audio_to_world(audio, sr)
-
     n_rows = sp.shape[-2]
 
     sp = F.interpolate(sp.unsqueeze(1), size=(int(n_rows*factor), sp.shape[-1])).squeeze(1)
@@ -73,19 +59,34 @@ def helium(audio, sr, factor):
         # sp = torch.cat([sp, torch.zeros(sp.shape[0], n_rows-sp.shape[-2], sp.shape[-1]).to(sp.device)], dim=-2) # TODO: WORLD doesn't deal well with absolute zeros
         sp = torch.cat([sp, torch.min(sp)*torch.ones(sp.shape[0], n_rows - sp.shape[-2], sp.shape[-1]).to(sp.device)], dim=-2)
 
-    audio = world_to_audio(f0, sp, ap, sr)
+def change_pitch(f0, factor):
+    """
+    Change pitch by a multiplicative factor _factor_
+    """
+    return f0 * factor
 
-    return audio
-
-def time_stretch(audio, sr, factor):
+def time_stretch(f0, sp, ap, factor):
     """
     Stretch the duration of the audio by a factor _factor_ without changing pitch or formant characteristics
     """
-    f0, sp, ap = audio_to_world(audio, sr)
-
     f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*factor),)).squeeze(0)
     sp = F.interpolate(sp, size=(int(sp.shape[-1]*factor),))
     ap = F.interpolate(ap, size=(int(ap.shape[-1]*factor),))
+
+    return audio
+
+def modify_audio(
+    audio,
+    sr,
+    helium_factor       = 1.0,
+    change_pitch_factor = 1.0,
+    time_stretch_factor = 1.0,
+):
+    f0, sp, ap = audio_to_world(audio, sr)
+
+    sp = helium(sp, factor=helium_factor)
+    f0 = change_pitch(f0, factor=change_pitch_factor) # change pitch
+    f0, sp, ap = time_stretch(f0, sp, ap, factor=time_stretch_factor)
 
     audio = world_to_audio(f0, sp, ap, sr)
 

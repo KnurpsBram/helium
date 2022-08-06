@@ -1,9 +1,0 @@
-{% extends "extend_me_for_flash_messages.html" %}
-{% block body %}
-<h2>Change the pitch of your voice, without changing the formants!</h2>
-<form method="post" enctype="multipart/form-data">
-   Choose file: <input type="file" name="file"/><br>
-   Choose pitch shift (Hz): <input type="text" name="shift" value="100" size="5"><br>  
-   <input type="submit" value="Shift Pitch!" />
-</form>   
-{% endblock %}
