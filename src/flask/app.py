@@ -6,12 +6,9 @@ import shutil
 import librosa
 import soundfile as sf
 
-from flask import Flask, flash, send_file, render_template, request, redirect
+from flask import Flask, flash, send_file, render_template, request, redirect, url_for
 
 from core.helium import modify_audio
-
-### from the helium/src directory, run: #TODO: this currently does not work. The best way is to run this as a python file. How can I run a flask app properly?
-# FLASK_APP=flask/app.py FLASK_ENV=development flask run --port 8000
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -20,28 +17,38 @@ app.secret_key = os.urandom(32)
 example_audio_path = "p243_001.wav"
 tempfile_path = "temp_audio.wav"
 
+@app.route("/")
+def home():
+    url = url_for("gui_modify_audio")
+    return f"please visit {request.host}{url}"
+
 @app.route("/up")
 def up():
     return "Service is up!"
 
-@app.route("/gui")
+@app.route("/gui", methods=["GET", "POST"])
 def gui_modify_audio():
+    """
+    Returns a html file with a form where the user can upload an audio file and set parameters to modify audio
+    If the request method is POST, audio and parameters are parsed from the request form, the audio gets modified and the user receives the modified audio via auto-download
 
-    def get_factor_from_form(key):
-        try:
-            factor = float(request.form[key])
-            if factor < 0:
-                flash("Sorry, can't do negative numbers")
-        except:
-            flash('Factor must be a number')
-            return redirect(request.url)
-        return factor
+    If no audio is selected, the default example audio file is used
+
+    See `modify_audio()`
+    """
 
     if request.method == "POST":
 
-        helium_factor       = get_factor_from_form('helium_factor')
-        change_pitch_factor = get_factor_from_form('change_pitch_factor')
-        time_stretch_factor = get_factor_from_form('time_stretch_factor')
+        try:
+            helium_factor = float(request.form['helium_factor'])
+            change_pitch_factor = float(request.form['change_pitch_factor'])
+            time_stretch_factor = float(request.form['time_stretch_factor'])
+        except:
+            flash("Factor must be a number")
+            return redirect(request.url)
+
+        if (helium_factor < 0) or (change_pitch_factor < 0) or (time_stretch_factor < 0):
+            flash("Sorry, can't do negative numbers")
 
         if 'file' not in request.files or request.files['file'].filename == "":
             shutil.copy(example_audio_path, tempfile_path)
@@ -71,7 +78,4 @@ def gui_modify_audio():
     return render_template("helium_gui.html")
 
 if __name__ == "__main__":
-    app.config['DEBUG'] = True
-    # app.run()
-    
     app.run(host="0.0.0.0")

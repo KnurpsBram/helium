@@ -13,7 +13,7 @@ With this little webapp you can play with changing the pitch and formants of you
    Change duration: <input type="text" name="factor" value="1.8" size="5"><br>  
    <input type="submit" value="Modify Audio!" />
 </form> -->
-<form>
+<form method="post" enctype="multipart/form-data" >
    <table>
       <tr>
          <td align="left">Choose file:</td>
@@ -21,15 +21,15 @@ With this little webapp you can play with changing the pitch and formants of you
       </tr>
       <tr>
          <td align="left">Change formants:</td>
-         <td align="left"><input type="text" name="factor" value="2.3" size="5"></td>
+         <td align="left"><input type="text" name="helium_factor" value="2.3" size="5"></td>
       </tr>
       <tr>
          <td align="left">Change pitch:</td>
-         <td align="left"><input type="text" name="factor" value="1.0" size="5"></td>
+         <td align="left"><input type="text" name="change_pitch_factor" value="1.0" size="5"></td>
       </tr>
       <tr>
          <td align="left">Change duration:</td>
-         <td align="left"><input type="text" name="factor" value="1.8" size="5"></td>
+         <td align="left"><input type="text" name="time_stretch_factor" value="1.0" size="5"></td>
       </tr>
          <td align="left"><input type="submit" value="Let's go!"></td>     
    </table>
