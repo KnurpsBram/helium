@@ -1,4 +1,4 @@
-# Helium
+# Helium🎈
 It's a misconception that helium raises the pitch of your voice. 
 It actually changes the speed of sound through the air. 
 Your vocal cords create the same pitch, but the air in your mouth _resonates_ at different frequencies!
