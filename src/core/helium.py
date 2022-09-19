@@ -101,8 +101,8 @@ def modify_audio(
     """
     f0, sp, ap = audio_to_world(audio, sr)
 
-    sp = helium(sp, factor=helium_factor)
-    f0 = change_pitch(f0, factor=change_pitch_factor) # change pitch
+    sp         = helium(sp, factor=helium_factor)
+    f0         = change_pitch(f0, factor=change_pitch_factor) 
     f0, sp, ap = time_stretch(f0, sp, ap, factor=time_stretch_factor)
 
     audio = world_to_audio(f0, sp, ap, sr)
