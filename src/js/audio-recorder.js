@@ -29,8 +29,6 @@ var audioRecorder = {
         let mimeType = audioRecorder.mediaRecorder.mimeType;
         console.log(mimeType);
 
-        // let mimeType = "audio/wav; codecs=MS_PCM";
-
         return new Promise(resolve => {
             audioRecorder.mediaRecorder.addEventListener("stop", () => {
 

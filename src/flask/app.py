@@ -16,6 +16,7 @@ app.secret_key = os.urandom(32)
  # paths are relative to helium/src
 example_audio_path = "p243_001.wav"
 tempfile_path = "temp_audio.wav"
+tempfile_path2 = "temp_audio2.wav"
 
 @app.route("/")
 def home():
@@ -84,7 +85,7 @@ def gui_modify_audio():
 @app.route("/api", methods=["POST"])
 def modify_audio():
     """
-    WORK IN PROGRESS
+    
     """
     # try:
     #     helium_factor       = float(request.form['helium_factor'])
@@ -103,13 +104,14 @@ def modify_audio():
     #     file = request.files['file']
     #     file.save(tempfile_path) 
 
-    file = request.files['file']
+    file = request.files['audio_data']
     file.save(tempfile_path)
-    file.seek(0)
     
+    os.system(f"yes | ffmpeg -i {tempfile_path} -c:a pcm_s16le {tempfile_path2}") # webm to wav
+
     # audio, sr = sf.read(tempfile_path)
-    # audio, sr = librosa.load("p243_001.wav", sr=None)
-    audio, sr = librosa.load(tempfile_path, sr=None)
+    audio, sr = librosa.load(tempfile_path2, sr=None)
+    # audio, sr = librosa.load(tempfile_path, sr=None)
 
     print("Got audio!")
     print(len(audio))

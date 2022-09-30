@@ -22,17 +22,33 @@ function stopAudioRecording() {
         // file = blobToFile(audioBlob, "audio.wav");//.then(file => {
         // //});
 
-        // let audioUrl = URL.createObjectURL(audioBlob);
+        let audioUrl = URL.createObjectURL(audioBlob);
 
-        //going by example here: https://auphonic.com/help/api/examples.html
+        // //going by example here: https://auphonic.com/help/api/examples.html
         let apiUrl = "http://127.0.0.1:5000/api";
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", apiUrl, true);
+        // // var xhr = new XMLHttpRequest();
+        // // xhr.open("POST", apiUrl, true);
 
-        var formData = new FormData();
-        formData.append("file", audioBlob, "file");
+        let formData = new FormData();
+        // // formData.append("file", audioBlob, "file");
+        formData.append("audio_data", audioBlob);
 
-        xhr.send(formData);
+        // // xhr.send(formData);
+
+        fetch(
+            apiUrl, {
+                method: "POST",
+                cache: "no-cache",
+                mode: "no-cors",
+                body: formData
+            }
+        )
+        .then(resp => {
+            console.log(resp);
+            console.log(resp.arrayBuffer());
+            audioPlayer.src = URL.createObjectURL(new Blob([resp.arrayBuffer() ]))
+        })
+        ;
                 
         // audioPlayer.src = audioUrl;
         // audioPlayer.load(); // this doesn't appear to be working
@@ -42,14 +58,6 @@ function stopAudioRecording() {
     startRecordingButtonContainer.style.display = "none";
     stopRecordingButtonContainer.style.display  = "none";        
 }
-
-// // START TEMP
-// //convert Blob to File. Pass the blob and the file title as arguments
-// function blobToFile(theBlob, fileName) {
-//     var file = new File([theBlob], fileName);
-//     return file;
-// }
-// // END TEMP
 
 function deleteRecording() {
     audioRecorder.reset();
