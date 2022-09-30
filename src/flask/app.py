@@ -26,6 +26,10 @@ def home():
 def up():
     return "Service is up!"
 
+@app.route("/test")
+def test():
+    return render_template("test.html")
+
 @app.route("/gui", methods=["GET", "POST"])
 def gui_modify_audio():
     """
@@ -40,7 +44,7 @@ def gui_modify_audio():
     if request.method == "POST":
 
         try:
-            helium_factor = float(request.form['helium_factor'])
+            helium_factor       = float(request.form['helium_factor'])
             change_pitch_factor = float(request.form['change_pitch_factor'])
             time_stretch_factor = float(request.form['time_stretch_factor'])
         except:
@@ -77,5 +81,51 @@ def gui_modify_audio():
 
     return render_template("helium_gui.html")
 
+@app.route("/api", methods=["POST"])
+def modify_audio():
+    """
+    WORK IN PROGRESS
+    """
+    # try:
+    #     helium_factor       = float(request.form['helium_factor'])
+    #     change_pitch_factor = float(request.form['change_pitch_factor'])
+    #     time_stretch_factor = float(request.form['time_stretch_factor'])
+    # except:
+    #     flash("Factor must be a number")
+    #     return redirect(request.url)
+
+    # if (helium_factor < 0) or (change_pitch_factor < 0) or (time_stretch_factor < 0):
+    #     flash("Sorry, can't do negative numbers")
+
+    # if 'file' not in request.files or request.files['file'].filename == "":
+    #     shutil.copy(example_audio_path, tempfile_path)
+    # else:
+    #     file = request.files['file']
+    #     file.save(tempfile_path) 
+
+    file = request.files['file']
+    file.save(tempfile_path)
+    file.seek(0)
+    
+    # audio, sr = sf.read(tempfile_path)
+    # audio, sr = librosa.load("p243_001.wav", sr=None)
+    audio, sr = librosa.load(tempfile_path, sr=None)
+
+    print("Got audio!")
+    print(len(audio))
+
+    sr = sr * 2 # TEMP: resample
+
+    sf.write(file=tempfile_path, data=audio, samplerate=sr)
+
+    return send_file(
+        f"{os.getcwd()}/{tempfile_path}", 
+        mimetype="audio/wav",
+        as_attachment=True,
+        attachment_filename="latest.wav"
+    )
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    # app.run(host="0.0.0.0")
+    app.run(debug=True)

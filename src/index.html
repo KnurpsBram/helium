@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title> Audio Recorder </title>
+        <style type="text/css"> </style>
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <main>
+            <h1> Audio Recorder </h1>
+            <div class="start-recording-button-container" style="display:block">                
+                <p> Press to start recording </p>
+                <i class="start-recording-button fa fa-microphone"></i>
+            </div>
+            <div class="stop-recording-button-container" style="display:none">
+                <p> Recording audio... </p>
+                <i class="stop-recording-button fa fa-stop-circle"></i>
+            </div>
+            <div class="audio-player-container" style="display:none">
+                <audio id="audio-player" controls></audio>
+                <i class="delete-recording-button fa fa-trash"></i>
+            </div>
+        </main>
+        <script src="js/audio-recorder.js"></script>
+        <script src="js/index.js"></script>
+    </body>
+</html>
