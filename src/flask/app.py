@@ -8,7 +8,9 @@ import soundfile as sf
 
 from flask import Flask, flash, send_file, render_template, request, redirect, url_for
 
-from core.helium import modify_audio
+from flask import Response
+
+# from core.helium import modify_audio
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -63,13 +65,14 @@ def gui_modify_audio():
 
         audio, sr = librosa.load(tempfile_path, sr=None)
 
-        audio = modify_audio(
-            audio,
-            sr,
-            helium_factor       = helium_factor,
-            change_pitch_factor = change_pitch_factor,
-            time_stretch_factor = time_stretch_factor,
-        )
+        # audio = modify_audio(
+        #     audio,
+        #     sr,
+        #     helium_factor       = helium_factor,
+        #     change_pitch_factor = change_pitch_factor,
+        #     time_stretch_factor = time_stretch_factor,
+        # )
+        sr = sr * 2 # TEMP: resample
 
         sf.write(file=tempfile_path, data=audio, samplerate=sr)
 
@@ -87,6 +90,9 @@ def modify_audio():
     """
     
     """
+
+    # TEMP: deactivated this block of code because I've got some issues setting up pyworld on my new laptop
+
     # try:
     #     helium_factor       = float(request.form['helium_factor'])
     #     change_pitch_factor = float(request.form['change_pitch_factor'])
@@ -106,25 +112,18 @@ def modify_audio():
 
     file = request.files['audio_data']
     file.save(tempfile_path)
-    
-    os.system(f"yes | ffmpeg -i {tempfile_path} -c:a pcm_s16le {tempfile_path2}") # webm to wav
+    audio, sr = sf.read(tempfile_path)
 
-    # audio, sr = sf.read(tempfile_path)
-    audio, sr = librosa.load(tempfile_path2, sr=None)
-    # audio, sr = librosa.load(tempfile_path, sr=None)
-
-    print("Got audio!")
-    print(len(audio))
-
-    sr = sr * 2 # TEMP: resample
-
+    # TEMP: just some simple resampling; 
+    # just to test if the audio is actually modified when it is played on the javascript side
+    sr = sr * 2 
     sf.write(file=tempfile_path, data=audio, samplerate=sr)
 
     return send_file(
         f"{os.getcwd()}/{tempfile_path}", 
         mimetype="audio/wav",
         as_attachment=True,
-        attachment_filename="latest.wav"
+        download_name="latest.wav"
     )
 
 

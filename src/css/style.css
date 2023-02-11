@@ -8,27 +8,27 @@ body {
     line-height: 1.2;
     color: #333;
 }
-.start-recording-button {
+.record-button {
     font-size: 70px;
     cursor: pointer;
     opacity: 0.75;
 }
-.start-recording-button:hover {
+.record-button:hover {
     opacity: 1.0;
 }
-.stop-recording-button {
+.stop-button {
     font-size: 70px;
     cursor: pointer;
     opacity: 0.75;
 }
-.stop-recording-button:hover {
+.stop-button:hover {
     opacity: 1.0;
 }
-.delete-recording-button {
+.delete-button {
     font-size: 70px;
     cursor: pointer;
     opacity: 0.75;
 }
-.delete-recording-button:hover {
+.delete-button:hover {
     opacity: 1.0;
 }

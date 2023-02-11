@@ -10,20 +10,20 @@
     <body>
         <main>
             <h1> Audio Recorder </h1>
-            <div class="start-recording-button-container" style="display:block">                
+            <div class="record-button-container" id="record-button-container" style="display:block">                
                 <p> Press to start recording </p>
-                <i class="start-recording-button fa fa-microphone"></i>
+                <i class="record-button fa fa-microphone"></i>
             </div>
-            <div class="stop-recording-button-container" style="display:none">
+            <div class="stop-button-container" id="stop-button-container" style="display:none">
                 <p> Recording audio... </p>
-                <i class="stop-recording-button fa fa-stop-circle"></i>
+                <i class="stop-button fa fa-stop-circle"></i>
             </div>
-            <div class="audio-player-container" style="display:none">
+            <div class="audio-player-container" id="audio-player-container" style="display:none">
                 <audio id="audio-player" controls></audio>
-                <i class="delete-recording-button fa fa-trash"></i>
+                <i class="delete-button fa fa-trash"></i>
             </div>
         </main>
-        <script src="js/audio-recorder.js"></script>
+        <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
         <script src="js/index.js"></script>
     </body>
 </html>
