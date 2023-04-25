@@ -4,7 +4,7 @@ var input;     // MediaStreamAudioSourceNode we'll be recording
 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext
-
+    
 var audioPlayer           = document.getElementById("audio-player");
 var audioPlayerContainer  = document.getElementById("audio-player-container");
 var recordButton          = document.getElementsByClassName('record-button')[0];
@@ -12,6 +12,8 @@ var stopButton            = document.getElementsByClassName('stop-button')[0];
 var deleteButton          = document.getElementsByClassName('delete-button')[0];
 var recordButtonContainer = document.getElementById("record-button-container");
 var stopButtonContainer   = document.getElementById('stop-button-container');
+
+var apiUrl = "http://127.0.0.1:5000/api";
 
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
@@ -56,6 +58,7 @@ function startRecording() {
 }
 
 function stopRecording() {
+
     console.log("stopButton clicked");
 
     // disable the stop button
@@ -63,8 +66,6 @@ function stopRecording() {
 
     recordButtonContainer.style.display = "none";
     stopButtonContainer.style.display   = "none";      
-
-    console.log(rec);
 
     // tell the recorder to stop the recording
     rec.stop();
@@ -75,47 +76,61 @@ function stopRecording() {
     // create the wav blob and pass it to a callback function
     rec.exportWAV(buildAudioPlayer);
 
+    // show the audio player
     audioPlayerContainer.style.display = "block";
-    
 }
 
 function buildAudioPlayer(audioBlob) {
     console.log("building audioPlayer...");
 
-    let audioUrl = URL.createObjectURL(audioBlob);
+    audioUrl = URL.createObjectURL(audioBlob);
 
-    // The flask app should be running on this ip (localhost)
-    let apiUrl = "http://127.0.0.1:5000/api";
+    // Until I've found a better way, we'll convert the audio to a string
+    // and send it as JSON to the API
+    audioBlob.arrayBuffer().then(function(buffer) {
 
-    var xhr = new XMLHttpRequest();
-    let formData = new FormData();
-    formData.append("file", audioBlob, "file");
-    formData.append("audio_data", audioBlob);
+        var int16arr = new Int16Array(buffer); // interpret the bits in the audioblob as 16-bit integers (that's usually right)
+        var int16str = int16arr.join(",");  // convert the array to a string
 
-    xhr.open("POST", apiUrl, true);
-    xhr.send(formData);
+        // Sumbit a POST request with JSON data
+        var xhr = new XMLHttpRequest();
 
-    // FIXME: the block below does not work
-    // It is supposed to receive a new audio file from the flask app
-    // and put it into an audio player
-    fetch(
-        apiUrl, {
-            method: "POST",
-            cache: "no-cache",
-            mode: "no-cors",
-            body: formData
-        }
-    )
-    .then(resp => {
-        console.log(resp);
-        console.log(resp.arrayBuffer());
-        audioPlayer.src = URL.createObjectURL(new Blob([resp.arrayBuffer() ]))
-        // audioPlayer.src = apiUrl;
-    })
+        apiUrl = "http://127.0.0.1:5000/api";
 
-    // // The block below displays the recorded audio (without sending it to the flask app)
-    // audioPlayer.controls = true;
-    // audioPlayer.src = audioUrl;
+        xhr.open("POST", apiUrl, false);
+        p = fetch(apiUrl, {
+            method: 'POST',
+            // mode: "no-cors",
+            // cache: "no-cache",
+            headers: {
+                // 'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "helium_factor": 1.5, 
+                "samplerate": 44100, // TODO: would be nice if we could read the samplerate from the blob somehow
+                "audio": int16str
+            })
+        })
+        .then(resp => {
+            if (resp.ok) {
+                return resp.json()
+            } else {
+                alert("something is wrong")
+            }
+        })
+        .then(json => {
+            console.log(json);
+
+            // I can receive a string from flask
+            // How to convert it to audio and play it as a blob?
+
+            audioPlayer.src = audioUrl;
+            audioPlayer.controls = true;
+
+            audioPlayerContainer.style.display = "block";
+        });
+    });
 }
 
 function deleteRecording() {

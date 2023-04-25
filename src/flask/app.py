@@ -1,18 +1,24 @@
 import os 
 import sys 
 sys.path.append(os.getcwd())
+import io
+import base64
+import numpy as np
 import shutil
 
 import librosa
-import soundfile as sf
+# import soundfile as sf
+import scipy.io.wavfile
 
 from flask import Flask, flash, send_file, render_template, request, redirect, url_for
-
 from flask import Response
+
+from flask_cors import CORS
 
 # from core.helium import modify_audio
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = os.urandom(32)
 
  # paths are relative to helium/src
@@ -85,7 +91,7 @@ def gui_modify_audio():
 
     return render_template("helium_gui.html")
 
-@app.route("/api", methods=["POST"])
+@app.route("/api", methods=["POST", "GET"])
 def modify_audio():
     """
     
@@ -110,21 +116,22 @@ def modify_audio():
     #     file = request.files['file']
     #     file.save(tempfile_path) 
 
-    file = request.files['audio_data']
-    file.save(tempfile_path)
-    audio, sr = sf.read(tempfile_path)
+    d = request.get_json()
+    
+    audio = np.array([np.int16(x) for x in d["audio"].split(",")]) # decode from string to array
+    audio = np.repeat(audio, 2) # modify audio in some way that we can hear back on the other side
+    audio_str = ",".join([str(x) for x in audio]) # encode from array to string
 
-    # TEMP: just some simple resampling; 
-    # just to test if the audio is actually modified when it is played on the javascript side
-    sr = sr * 2 
-    sf.write(file=tempfile_path, data=audio, samplerate=sr)
+    return {"my_msg": "hello there", "audio_str": audio_str}
+    
+    # resp = send_file(
+    #     f"{os.getcwd()}/{tempfile_path}", 
+    #     mimetype="audio/wav",
+    #     as_attachment=True,
+    #     download_name="latest.wav"
+    # )
 
-    return send_file(
-        f"{os.getcwd()}/{tempfile_path}", 
-        mimetype="audio/wav",
-        as_attachment=True,
-        download_name="latest.wav"
-    )
+    # return resp
 
 
 if __name__ == "__main__":
