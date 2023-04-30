@@ -7,7 +7,7 @@ import numpy as np
 import shutil
 
 import librosa
-# import soundfile as sf
+import soundfile as sf
 import scipy.io.wavfile
 
 from flask import Flask, flash, send_file, render_template, request, redirect, url_for
@@ -116,22 +116,21 @@ def modify_audio():
     #     file = request.files['file']
     #     file.save(tempfile_path) 
 
-    d = request.get_json()
-    
-    audio = np.array([np.int16(x) for x in d["audio"].split(",")]) # decode from string to array
-    audio = np.repeat(audio, 2) # modify audio in some way that we can hear back on the other side
-    audio_str = ",".join([str(x) for x in audio]) # encode from array to string
+    file = request.files['audio_data']
+    file.save(tempfile_path)
+    audio, sr = librosa.load(tempfile_path, sr=None)
 
-    return {"my_msg": "hello there", "audio_str": audio_str}
-    
-    # resp = send_file(
-    #     f"{os.getcwd()}/{tempfile_path}", 
-    #     mimetype="audio/wav",
-    #     as_attachment=True,
-    #     download_name="latest.wav"
-    # )
+    sr = sr * 2 
+    sf.write(file=tempfile_path, data=audio, samplerate=sr)
 
-    # return resp
+    resp = send_file(
+        f"{os.getcwd()}/{tempfile_path}", 
+        mimetype="audio/wav",
+        as_attachment=True,
+        download_name="latest.wav"
+    )
+
+    return resp
 
 
 if __name__ == "__main__":

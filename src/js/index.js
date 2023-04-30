@@ -13,6 +13,7 @@ var deleteButton          = document.getElementsByClassName('delete-button')[0];
 var recordButtonContainer = document.getElementById("record-button-container");
 var stopButtonContainer   = document.getElementById('stop-button-container');
 
+// The flask app should be running on this ip (localhost)
 var apiUrl = "http://127.0.0.1:5000/api";
 
 recordButton.addEventListener("click", startRecording);
@@ -20,6 +21,7 @@ stopButton.addEventListener("click", stopRecording);
 deleteButton.addEventListener("click", deleteRecording);
 
 function startRecording() {
+
     console.log("recordButton clicked");
 
     // Simple constraints object, for more advanced audio features see
@@ -81,56 +83,41 @@ function stopRecording() {
 }
 
 function buildAudioPlayer(audioBlob) {
+
     console.log("building audioPlayer...");
 
     audioUrl = URL.createObjectURL(audioBlob);
 
-    // Until I've found a better way, we'll convert the audio to a string
-    // and send it as JSON to the API
-    audioBlob.arrayBuffer().then(function(buffer) {
+    var xhr = new XMLHttpRequest();
+    let formData = new FormData();
+    formData.append("file", audioBlob, "file");
+    formData.append("audio_data", audioBlob);
 
-        var int16arr = new Int16Array(buffer); // interpret the bits in the audioblob as 16-bit integers (that's usually right)
-        var int16str = int16arr.join(",");  // convert the array to a string
+    xhr.open("POST", apiUrl, false);
 
-        // Sumbit a POST request with JSON data
-        var xhr = new XMLHttpRequest();
-
-        apiUrl = "http://127.0.0.1:5000/api";
-
-        xhr.open("POST", apiUrl, false);
-        p = fetch(apiUrl, {
+    fetch(
+        apiUrl, {
             method: 'POST',
-            // mode: "no-cors",
-            // cache: "no-cache",
-            headers: {
-                // 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                "helium_factor": 1.5, 
-                "samplerate": 44100, // TODO: would be nice if we could read the samplerate from the blob somehow
-                "audio": int16str
-            })
-        })
-        .then(resp => {
-            if (resp.ok) {
-                return resp.json()
-            } else {
-                alert("something is wrong")
-            }
-        })
-        .then(json => {
-            console.log(json);
-
-            // I can receive a string from flask
-            // How to convert it to audio and play it as a blob?
-
-            audioPlayer.src = audioUrl;
-            audioPlayer.controls = true;
-
-            audioPlayerContainer.style.display = "block";
-        });
-    });
+            body: formData
+        }
+    )
+    .then(resp => {
+        if (resp.ok) {
+            resp.arrayBuffer().then(function(buffer) {
+                var new_blob = new Blob([buffer], {type: 'audio/wav'});
+    
+                console.log(new_blob);
+    
+                audioUrl = URL.createObjectURL(new_blob);
+    
+                console.log(audioUrl);
+                
+                audioPlayer.src = audioUrl;
+            });
+        } else {
+            alert("something is wrong")
+        }
+    })
 }
 
 function deleteRecording() {
