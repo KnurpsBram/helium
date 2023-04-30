@@ -9,4 +9,4 @@ With this web app - called **Helium** - you can play with changing the pitch and
 
 This is a fun little side project where I play with audio manipulations for speech. You can change the pitch, formants and tempo of your voice independently.
 - Core library (audio manipulation functions such as `pitch_shift`, `time_stretch` and `helium`). Implemented with WORLD vocoder.
-- Flask API (just a barebones GUI). Currently hosted on my raspberry pi! Please visit [86.83.9.1:5000/gui](http://86.83.9.1:5000/gui)
+- Flask API (just a barebones GUI). Currently hosted on my raspberry pi! Please visit [80.112.116.8:5000/gui](http://80.112.116.8:5000/gui)
