@@ -16,10 +16,8 @@ var stopButtonContainer   = document.getElementById('stop-button-container');
 // The flask app should be running on this ip (localhost)
 var apiUrl = "http://127.0.0.1:5000/api";
 
-recordButton.addEventListener("click", startRecording);
-stopButton.addEventListener("click", stopRecording);
-deleteButton.addEventListener("click", deleteRecording);
 
+recordButton.addEventListener("click", startRecording);
 function startRecording() {
 
     console.log("recordButton clicked");
@@ -59,6 +57,8 @@ function startRecording() {
     });
 }
 
+
+stopButton.addEventListener("click", stopRecording);
 function stopRecording() {
 
     console.log("stopButton clicked");
@@ -92,6 +92,9 @@ function buildAudioPlayer(audioBlob) {
     let formData = new FormData();
     formData.append("file", audioBlob, "file");
     formData.append("audio_data", audioBlob);
+    formData.append("formant_multiplier", calculateFormantMultiplier());
+    formData.append("pitch_multiplier", calculatePitchMultiplier());
+    formData.append("tempo_multiplier", calculateTempoMultiplier());
 
     xhr.open("POST", apiUrl, false);
 
@@ -105,13 +108,9 @@ function buildAudioPlayer(audioBlob) {
         if (resp.ok) {
             resp.arrayBuffer().then(function(buffer) {
                 var new_blob = new Blob([buffer], {type: 'audio/wav'});
-    
-                console.log(new_blob);
-    
+        
                 audioUrl = URL.createObjectURL(new_blob);
     
-                console.log(audioUrl);
-                
                 audioPlayer.src = audioUrl;
             });
         } else {
@@ -120,6 +119,8 @@ function buildAudioPlayer(audioBlob) {
     })
 }
 
+
+deleteButton.addEventListener("click", deleteRecording);
 function deleteRecording() {
     console.log("deleteButton clicked");
 
@@ -128,4 +129,45 @@ function deleteRecording() {
     audioPlayerContainer.style.display  = "none";
     recordButtonContainer.style.display = "block";
     stopButtonContainer.style.display   = "none";
+}
+
+
+var formantSlider = document.getElementById("formantSlider");
+var pitchSlider = document.getElementById("pitchSlider");
+var tempoSlider = document.getElementById("tempoSlider");
+
+var formantText = document.getElementById("formantText");
+var pitchText = document.getElementById("pitchText");
+var tempoText = document.getElementById("tempoText");
+
+formantSlider.addEventListener("input", setFormantText);
+pitchSlider.addEventListener("input", setPitchText);
+tempoSlider.addEventListener("input", setTempoText);
+
+setFormantText();
+setPitchText();
+setTempoText();
+
+function setFormantText() {
+    formantText.innerHTML = calculateFormantMultiplier();
+};
+
+function setPitchText() {
+    pitchText.innerHTML = calculatePitchMultiplier();
+};
+
+function setTempoText() {
+    tempoText.innerHTML = calculateTempoMultiplier();
+};
+
+function calculateFormantMultiplier() {
+    return Math.pow(10, formantSlider.value / 100).toFixed(2);
+}
+
+function calculatePitchMultiplier() {
+    return Math.pow(10, pitchSlider.value / 100).toFixed(2);
+}
+
+function calculateTempoMultiplier() {
+    return Math.pow(10, tempoSlider.value / 100).toFixed(2);
 }

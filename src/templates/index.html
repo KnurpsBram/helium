@@ -4,8 +4,8 @@
         <meta charset="utf-8">
         <title> Audio Recorder </title>
         <style type="text/css"> </style>
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
         <main>
@@ -22,8 +22,17 @@
                 <audio id="audio-player" controls></audio>
                 <i class="delete-button fa fa-trash"></i>
             </div>
+            <div class="formantSliderContainer">
+                <p> formant multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="formantSlider"> <span id="formantText"></span> </p>
+            </div>
+            <div class="pitcSliderContainer">
+                <p> pitch multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="pitchSlider"> <span id="pitchText"></span> </p>
+            </div>
+            <div class="tempoSliderContainer">
+                <p> tempo multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="tempoSlider"> <span id="tempoText"></span> </p>
+            </div>
         </main>
         <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
-        <script src="js/index.js"></script>
+        <script src="/static/js/index.js"></script>
     </body>
 </html>

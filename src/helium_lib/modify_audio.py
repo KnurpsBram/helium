@@ -3,7 +3,7 @@ import numpy as np
 import soundfile as sf
 import librosa
 
-import pyworld as pw
+# import pyworld as pw
 
 import torch
 import torch.nn.functional as F
@@ -57,7 +57,7 @@ def world_to_audio(f0, sp, ap, sr):
     
     return audio
 
-def helium(sp, factor):
+def modify_formants(sp, factor):
     """
     Change the formants of the audio by factor _factor_ by stretching/squashing the spectral envelope in the frequency dimension
     """
@@ -73,13 +73,13 @@ def helium(sp, factor):
 
     return sp
 
-def change_pitch(f0, factor):
+def modify_pitch(f0, factor):
     """
     Change pitch by a multiplicative factor _factor_
     """
     return f0 * factor
 
-def time_stretch(f0, sp, ap, factor):
+def modify_tempo(f0, sp, ap, factor):
     """
     Stretch the duration of the audio by a factor _factor_ without changing pitch or formant characteristics
     """
@@ -92,18 +92,18 @@ def time_stretch(f0, sp, ap, factor):
 def modify_audio(
     audio,
     sr,
-    helium_factor       = 1.0,
-    change_pitch_factor = 1.0,
-    time_stretch_factor = 1.0,
+    formant_multiplier = 1.0,
+    pitch_multiplier = 1.0,
+    tempo_multiplier = 1.0,
 ):
     """
     Modifies audio by mapping audio to WORLD parameters, applying modifications on the WORLD parameters and mapping them back to audio
     """
     f0, sp, ap = audio_to_world(audio, sr)
 
-    sp         = helium(sp, factor=helium_factor)
-    f0         = change_pitch(f0, factor=change_pitch_factor) 
-    f0, sp, ap = time_stretch(f0, sp, ap, factor=time_stretch_factor)
+    sp = modify_formants(sp, factor=formant_multiplier)
+    f0 = modify_pitch(f0, factor=pitch_multiplier) 
+    f0, sp, ap = modify_tempo(f0, sp, ap, factor=tempo_multiplier)
 
     audio = world_to_audio(f0, sp, ap, sr)
 
