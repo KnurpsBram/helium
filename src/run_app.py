@@ -5,6 +5,8 @@ import io
 import base64
 import numpy as np
 import shutil
+import random
+import string
 
 import librosa
 import soundfile as sf
@@ -40,7 +42,7 @@ def modify_audio():
     pitch_multiplier = float(request.form['pitch_multiplier'])
     tempo_multiplier = float(request.form['tempo_multiplier'])
 
-    tmp_subfolder = os.urandom(4)
+    tmp_subfolder = generate_random_string(length=4)
     incoming_audio_path = incoming_audio_path_template.format(tmp_subfolder=tmp_subfolder)
     outgoing_audio_path = outgoing_audio_path_template.format(tmp_subfolder=tmp_subfolder)
 
@@ -71,6 +73,8 @@ def modify_audio():
 
     return resp
 
+def generate_random_string(length=4):
+    return ''.join(random.choices(string.ascii_lowercase, k=length))
 
 if __name__ == "__main__":
     # app.run(host="0.0.0.0")
