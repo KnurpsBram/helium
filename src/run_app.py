@@ -1,19 +1,14 @@
 import os 
 import sys 
 sys.path.append(os.getcwd())
-import io
-import base64
-import numpy as np
 import shutil
 import random
 import string
 
 import librosa
 import soundfile as sf
-import scipy.io.wavfile
 
-from flask import Flask, flash, send_file, render_template, request, redirect, url_for
-from flask import Response
+from flask import Flask, send_file, render_template, request
 
 import helium_lib.modify_audio
 
@@ -22,8 +17,6 @@ app.secret_key = os.urandom(32)
 
  # paths are relative to helium/src
 example_audio_path = "example_audio/p243_001.wav"
-incoming_audio_path_template = "/tmp/{tmp_subfolder}/incoming_audio.wav"
-outgoing_audio_path_template = "/tmp/{tmp_subfolder}/outgoing_audio.wav"
 
 @app.route("/")
 def home():
@@ -42,9 +35,10 @@ def modify_audio():
     pitch_multiplier = float(request.form['pitch_multiplier'])
     tempo_multiplier = float(request.form['tempo_multiplier'])
 
-    tmp_subfolder = generate_random_string(length=4)
-    incoming_audio_path = incoming_audio_path_template.format(tmp_subfolder=tmp_subfolder)
-    outgoing_audio_path = outgoing_audio_path_template.format(tmp_subfolder=tmp_subfolder)
+    tmp_folder = f'/tmp/{generate_random_string(length=4)}'
+    os.makedirs(tmp_folder)
+    incoming_audio_path = f'{tmp_folder}/incoming_audio.wav'
+    outgoing_audio_path = f'{tmp_folder}/outgoing_audio.wav'
 
     file = request.files['audio_data']
     file.save(incoming_audio_path)
@@ -68,8 +62,7 @@ def modify_audio():
         download_name="latest.wav"
     )
 
-    os.remove(incoming_audio_path)
-    os.remove(outgoing_audio_path)
+    shutil.rmtree(tmp_folder)
 
     return resp
 
