@@ -13,19 +13,15 @@ import scipy.io.wavfile
 from flask import Flask, flash, send_file, render_template, request, redirect, url_for
 from flask import Response
 
-from flask_cors import CORS
-
 import helium_lib.modify_audio
 
 app = Flask(__name__)
-CORS(app)
 app.secret_key = os.urandom(32)
 
  # paths are relative to helium/src
-example_audio_path = "p243_001.wav"
-tempfile_path = "temp_audio.wav"
-tempfile_path2 = "temp_audio2.wav"
-
+example_audio_path = "example_audio/p243_001.wav"
+incoming_audio_path = "/tmp/{tmp_subfolder}/incoming_audio.wav"
+outgoing_audio_path = "/tmp/{tmp_subfolder}/outgoing_audio.wav"
 
 @app.route("/")
 def home():
@@ -44,10 +40,14 @@ def modify_audio():
     pitch_multiplier = float(request.form['pitch_multiplier'])
     tempo_multiplier = float(request.form['tempo_multiplier'])
 
-    file = request.files['audio_data']
-    file.save(tempfile_path)
+    tmp_subfolder = os.urandom(4)
+    incoming_audio_path = incoming_audio_path.format(tmp_subfolder=tmp_subfolder)
+    outgoing_audio_path = outgoing_audio_path.format(tmp_subfolder=tmp_subfolder)
 
-    audio, sr = librosa.load(tempfile_path, sr=None)
+    file = request.files['audio_data']
+    file.save(incoming_audio_path)
+
+    audio, sr = librosa.load(incoming_audio_path, sr=None)
 
     audio = helium_lib.modify_audio.modify_audio(
         audio,
@@ -57,14 +57,17 @@ def modify_audio():
         tempo_multiplier = tempo_multiplier,
     )
 
-    sf.write(file=tempfile_path, data=audio, samplerate=sr)
+    sf.write(file=outgoing_audio_path, data=audio, samplerate=sr)
 
     resp = send_file(
-        f"{os.getcwd()}/{tempfile_path}", 
+        outgoing_audio_path, 
         mimetype="audio/wav",
         as_attachment=True,
         download_name="latest.wav"
     )
+
+    os.remove(incoming_audio_path)
+    os.remove(outgoing_audio_path)
 
     return resp
 
