@@ -6,6 +6,6 @@ To run the Flask app:
   ```
 - Run the Flask app (from the base directory `<path_to_repo>/helium/src`):
   ```
-  python run_app.py
+  python app.py
   ```
 - Visit `<your_ip_address>:5000`

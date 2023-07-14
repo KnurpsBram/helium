@@ -14,7 +14,9 @@ var recordButtonContainer = document.getElementById("record-button-container");
 var stopButtonContainer   = document.getElementById('stop-button-container');
 
 // The flask app should be running on this ip (localhost)
-var apiUrl = "http://127.0.0.1:5000/api";
+// var apiUrl = "http://127.0.0.1:5000/api";
+var apiUrl = "https://192.168.174.16:5000/api";
+// var apiUrl = "https://80.112.116.8:5000/api";
 
 
 recordButton.addEventListener("click", startRecording);
