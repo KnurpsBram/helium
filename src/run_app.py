@@ -20,8 +20,8 @@ app.secret_key = os.urandom(32)
 
  # paths are relative to helium/src
 example_audio_path = "example_audio/p243_001.wav"
-incoming_audio_path = "/tmp/{tmp_subfolder}/incoming_audio.wav"
-outgoing_audio_path = "/tmp/{tmp_subfolder}/outgoing_audio.wav"
+incoming_audio_path_template = "/tmp/{tmp_subfolder}/incoming_audio.wav"
+outgoing_audio_path_template = "/tmp/{tmp_subfolder}/outgoing_audio.wav"
 
 @app.route("/")
 def home():
@@ -41,8 +41,8 @@ def modify_audio():
     tempo_multiplier = float(request.form['tempo_multiplier'])
 
     tmp_subfolder = os.urandom(4)
-    incoming_audio_path = incoming_audio_path.format(tmp_subfolder=tmp_subfolder)
-    outgoing_audio_path = outgoing_audio_path.format(tmp_subfolder=tmp_subfolder)
+    incoming_audio_path = incoming_audio_path_template.format(tmp_subfolder=tmp_subfolder)
+    outgoing_audio_path = outgoing_audio_path_template.format(tmp_subfolder=tmp_subfolder)
 
     file = request.files['audio_data']
     file.save(incoming_audio_path)
