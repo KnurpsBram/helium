@@ -9,10 +9,12 @@ import librosa
 import soundfile as sf
 
 from flask import Flask, send_file, render_template, request
+from flask_cors import CORS
 
-# import helium_lib.modify_audio
+import helium_lib.modify_audio
 
 app = Flask(__name__)
+cors = CORS(app)
 app.secret_key = os.urandom(32)
 
  # paths are relative to helium/src
@@ -45,16 +47,13 @@ def modify_audio():
 
     audio, sr = librosa.load(incoming_audio_path, sr=None)
 
-    ### TEMP: modify audio in some trivial hardcoded way so that we don't have to use pyworld
-    sr = sr * 2 
-
-    # audio = helium_lib.modify_audio.modify_audio(
-    #     audio,
-    #     sr,
-    #     formant_multiplier = formant_multiplier,
-    #     pitch_multiplier = pitch_multiplier,
-    #     tempo_multiplier = tempo_multiplier,
-    # )
+    audio = helium_lib.modify_audio.modify_audio(
+        audio,
+        sr,
+        formant_multiplier = formant_multiplier,
+        pitch_multiplier = pitch_multiplier,
+        tempo_multiplier = tempo_multiplier,
+    )
 
     sf.write(file=outgoing_audio_path, data=audio, samplerate=sr)
 
