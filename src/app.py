@@ -83,9 +83,10 @@ if __name__ == "__main__":
     #     - Add the URL of the website (e.g. https://80.112.116.8:5000) and click 'Enable'
     #     - Relaunch Chrome
     #   - The user has to click through a warning that the certificate is not valid
-    #   - The app becomes unresponsive after about a minute or so (regardless of whether it's hosted on laptop or raspberry pi)
-    ssl_context = 'adhoc'
-    # ssl_context = ('cert.pem', 'key.pem') # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
+    #   - Still some problems, see issue #3
+
+    # ssl_context = 'adhoc'
+    ssl_context = ('cert.pem', 'key.pem') # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
     
     app.run(host="0.0.0.0", ssl_context=ssl_context)
     # app.run(host="0.0.0.0")
