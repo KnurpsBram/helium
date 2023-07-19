@@ -5,27 +5,15 @@ var input;     // MediaStreamAudioSourceNode we'll be recording
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext
     
-var audioPlayer           = document.getElementById("audio-player");
-var audioPlayerContainer  = document.getElementById("audio-player-container");
-var recordButton          = document.getElementsByClassName('record-button')[0];
-var stopButton            = document.getElementsByClassName('stop-button')[0];
-var deleteButton          = document.getElementsByClassName('delete-button')[0];
+var audioPlayer = document.getElementById("audio-player");
+var audioPlayerContainer = document.getElementById("audio-player-container");
+var recordButton = document.getElementsByClassName('record-button')[0];
+var stopButton = document.getElementsByClassName('stop-button')[0];
+var deleteButton = document.getElementsByClassName('delete-button')[0];
 var recordButtonContainer = document.getElementById("record-button-container");
-var stopButtonContainer   = document.getElementById('stop-button-container');
+var stopButtonContainer = document.getElementById('stop-button-container');
 
-// The flask app should be running on this ip (localhost)
-<<<<<<< HEAD
-var apiUrl = "http://127.0.0.1:5000/api";
-// var apiUrl = "https://192.168.178.16:5000/api";
-// var apiUrl = "https://192.168.178.128:5000/api";
-// var apiUrl = "https://80.112.116.8:5000/api";
-=======
-// var apiUrl = "http://127.0.0.1:5000/api";
-// var apiUrl = "https://192.168.178.16:5000/api";
-// var apiUrl = "https://192.168.178.128:5000/api";
-var apiUrl = "https://80.112.116.8:5000/api";
->>>>>>> origin
-
+var apiUrl  = document.getElementById('api_url').textContent;
 
 recordButton.addEventListener("click", startRecording);
 function startRecording() {
@@ -135,11 +123,7 @@ function deleteRecording() {
     console.log("deleteButton clicked");
 
     recordButton.disabled = false;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> origin
     audioPlayerContainer.style.display  = "none";
     recordButtonContainer.style.display = "block";
     stopButtonContainer.style.display   = "none";
