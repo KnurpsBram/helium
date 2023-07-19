@@ -1,0 +1,34 @@
+main {
+    text-align: center;
+}
+body {
+    background-color: lightcyan;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow', sans-serif;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #333;
+}
+.record-button {
+    font-size: 70px;
+    cursor: pointer;
+    opacity: 0.75;
+}
+.record-button:hover {
+    opacity: 1.0;
+}
+.stop-button {
+    font-size: 70px;
+    cursor: pointer;
+    opacity: 0.75;
+}
+.stop-button:hover {
+    opacity: 1.0;
+}
+.delete-button {
+    font-size: 70px;
+    cursor: pointer;
+    opacity: 0.75;
+}
+.delete-button:hover {
+    opacity: 1.0;
+}

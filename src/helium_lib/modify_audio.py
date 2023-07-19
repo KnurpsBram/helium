@@ -57,13 +57,13 @@ def world_to_audio(f0, sp, ap, sr):
     
     return audio
 
-def helium(sp, factor):
+def modify_formants(sp, formant_multiplier):
     """
     Change the formants of the audio by factor _factor_ by stretching/squashing the spectral envelope in the frequency dimension
     """
     n_rows = sp.shape[-2]
 
-    sp = F.interpolate(sp.unsqueeze(1), size=(int(n_rows*factor), sp.shape[-1])).squeeze(1)
+    sp = F.interpolate(sp.unsqueeze(1), size=(int(n_rows*formant_multiplier), sp.shape[-1])).squeeze(1)
 
     if sp.shape[-2] > n_rows:
         sp = sp[:, :n_rows, :]
@@ -73,38 +73,44 @@ def helium(sp, factor):
 
     return sp
 
-def change_pitch(f0, factor):
+def modify_pitch(f0, pitch_multiplier):
     """
     Change pitch by a multiplicative factor _factor_
     """
-    return f0 * factor
+    return f0 * pitch_multiplier
 
-def time_stretch(f0, sp, ap, factor):
+def modify_tempo(f0, sp, ap, tempo_multiplier):
     """
     Stretch the duration of the audio by a factor _factor_ without changing pitch or formant characteristics
     """
-    f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*factor),)).squeeze(0)
-    sp = F.interpolate(sp, size=(int(sp.shape[-1]*factor),))
-    ap = F.interpolate(ap, size=(int(ap.shape[-1]*factor),))
+    time_multiplier = 1.0 / tempo_multiplier
+    f0 = F.interpolate(f0.unsqueeze(0), size=(int(f0.shape[-1]*time_multiplier),)).squeeze(0)
+    sp = F.interpolate(sp, size=(int(sp.shape[-1]*time_multiplier),))
+    ap = F.interpolate(ap, size=(int(ap.shape[-1]*time_multiplier),))
 
     return f0, sp, ap
 
 def modify_audio(
     audio,
     sr,
-    helium_factor       = 1.0,
-    change_pitch_factor = 1.0,
-    time_stretch_factor = 1.0,
+    formant_multiplier = 1.0,
+    pitch_multiplier = 1.0,
+    tempo_multiplier = 1.0,
 ):
     """
     Modifies audio by mapping audio to WORLD parameters, applying modifications on the WORLD parameters and mapping them back to audio
     """
-    f0, sp, ap = audio_to_world(audio, sr)
 
-    sp         = helium(sp, factor=helium_factor)
-    f0         = change_pitch(f0, factor=change_pitch_factor) 
-    f0, sp, ap = time_stretch(f0, sp, ap, factor=time_stretch_factor)
+    if all([np.isclose(x, 1.0) for x in [formant_multiplier, pitch_multiplier, tempo_multiplier]]):
+        # if the multipliers are set to one, don't modify the audio
+        pass
+    else:
+        f0, sp, ap = audio_to_world(audio, sr)
 
-    audio = world_to_audio(f0, sp, ap, sr)
+        sp = modify_formants(sp, formant_multiplier)
+        f0 = modify_pitch(f0, pitch_multiplier) 
+        f0, sp, ap = modify_tempo(f0, sp, ap, tempo_multiplier)
+
+        audio = world_to_audio(f0, sp, ap, sr)
 
     return audio

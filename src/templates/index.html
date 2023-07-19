@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title> Helium </title>
+        <style type="text/css"> </style>
+        <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
+    <body>
+        <main>
+            <h1> Helium </h1>
+            <div class="record-button-container" id="record-button-container" style="display:block">                
+                <p> Press to start recording </p>
+                <i class="record-button fa fa-microphone"></i>
+            </div>
+            <div class="stop-button-container" id="stop-button-container" style="display:none">
+                <p> Recording audio... </p>
+                <i class="stop-button fa fa-stop-circle"></i>
+            </div>
+            <div class="audio-player-container" id="audio-player-container" style="display:none">
+                <audio id="audio-player" controls></audio>
+                <i class="delete-button fa fa-trash"></i>
+            </div>
+            <div class="formantSliderContainer">
+                <p> formant multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="formantSlider"> <span id="formantText"></span> </p>
+            </div>
+            <div class="pitcSliderContainer">
+                <p> pitch multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="pitchSlider"> <span id="pitchText"></span> </p>
+            </div>
+            <div class="tempoSliderContainer">
+                <p> tempo multiplier: <input type="range" min="-100" max="100" value="0" class="slider" id="tempoSlider"> <span id="tempoText"></span> </p>
+            </div>
+        </main>
+        <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+        <script src="/static/js/index.js"></script>
+    </body>
+</html>

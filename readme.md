@@ -1,12 +1,6 @@
 # Helium🎈
-It's a misconception that helium raises the pitch of your voice. 
-It actually changes the speed of sound through the air. 
-Your vocal cords create the same pitch, but the air in your mouth _resonates_ at different frequencies!
+Helium doesn't actually change the pitch of your voice. 
+It changes the speed of sound through the air. 
+Your vocal cords move at the same frequency, but the air in your mouth _resonates_ at different frequencies!
 
 With this web app - called **Helium** - you can play with changing the pitch and formants of your voice independently. 
-
-## Welcome to the Helium Suite
-
-This is a fun little side project where I play with audio manipulations for speech. You can change the pitch, formants and tempo of your voice independently.
-- Core library (audio manipulation functions such as `pitch_shift`, `time_stretch` and `helium`). Implemented with WORLD vocoder.
-- Flask API (just a barebones GUI). Currently hosted on my raspberry pi! Please visit [80.112.116.8:5000/gui](http://80.112.116.8:5000/gui)
