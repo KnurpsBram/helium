@@ -11,7 +11,7 @@ import soundfile as sf
 from flask import Flask, send_file, render_template, request
 from flask_cors import CORS
 
-import helium_lib.modify_audio
+# import helium_lib.modify_audio
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -47,13 +47,14 @@ def modify_audio():
 
     audio, sr = librosa.load(incoming_audio_path, sr=None)
 
-    audio = helium_lib.modify_audio.modify_audio(
-        audio,
-        sr,
-        formant_multiplier = formant_multiplier,
-        pitch_multiplier = pitch_multiplier,
-        tempo_multiplier = tempo_multiplier,
-    )
+    sr = sr * 2
+    # audio = helium_lib.modify_audio.modify_audio(
+    #     audio,
+    #     sr,
+    #     formant_multiplier = formant_multiplier,
+    #     pitch_multiplier = pitch_multiplier,
+    #     tempo_multiplier = tempo_multiplier,
+    # )
 
     sf.write(file=outgoing_audio_path, data=audio, samplerate=sr)
 
@@ -85,10 +86,10 @@ if __name__ == "__main__":
     #   - The user has to click through a warning that the certificate is not valid
     #   - Still some problems, see issue #3
 
-    # ssl_context = 'adhoc'
-    ssl_context = ('cert.pem', 'key.pem') # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
+    ssl_context = 'adhoc'
+    # ssl_context = ('cert.pem', 'key.pem') # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365`
     
-    app.run(host="0.0.0.0", ssl_context=ssl_context)
+    # app.run(host="0.0.0.0", ssl_context=ssl_context)
     # app.run(host="0.0.0.0")
 
-    # app.run(debug=True)
+    app.run(debug=True)
