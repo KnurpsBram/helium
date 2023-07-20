@@ -172,7 +172,7 @@ function calculateFormantMultiplier() {
 
 function calculatePitchMultiplier() {
     // slider goes from [-100, 100], map that to [-1, 1]
-    var val = formantSlider.value / 100
+    var val = pitchSlider.value / 100
     var powBase = 2;
     var max = 4; // min is 1/max
     var rangeMultiplier = Math.pow(max, 1/powBase);
@@ -181,7 +181,7 @@ function calculatePitchMultiplier() {
 
 function calculateTempoMultiplier() {
     // slider goes from [-100, 100], map that to [-1, 1]
-    var val = formantSlider.value / 100
+    var val = tempoSlider.value / 100
     var powBase = 2;
     var max = 3; // min is 1/max
     var rangeMultiplier = Math.pow(max, 1/powBase);

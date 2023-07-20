@@ -78,7 +78,7 @@ if __name__ == "__main__":
     
     app.config['api_url'] = args.api_url
 
-    app.run(debug=True)
+    # app.run(debug=True)
 
     # I'm having some issue setting up HTTPS
     # Browsers only want to open the microphone of the user for HTTPS websites (or localhost), not for HTTP
@@ -87,11 +87,11 @@ if __name__ == "__main__":
     # Using the 'simple' options below you can get some HTTPS-like behaviour, but with a drawback:
     # The user has to click through a warning that the certificate is not valid
 
-    # adhoc keys are generated on the fly, the user must tell the browser to trust this site every time
-    ssl_context = 'adhoc'
+    # # adhoc keys are generated on the fly, the user must tell the browser to trust this site every time
+    # ssl_context = 'adhoc'
 
-    # # self-signed certificates are generated once, the user can tell the browser to trust this site once
-    # # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out keys/cert.pem -keyout keys/key.pem -days 365`
-    # ssl_context = ('keys/cert.pem', 'keys/key.pem') 
+    # self-signed certificates are generated once, the user can tell the browser to trust this site once
+    # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out keys/cert.pem -keyout keys/key.pem -days 365`
+    ssl_context = ('keys/cert.pem', 'keys/key.pem') 
 
     app.run(host="0.0.0.0", ssl_context=ssl_context)
