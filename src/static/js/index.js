@@ -85,7 +85,6 @@ function showAudioPlayer(audioBlob) {
     console.log("building audioPlayer...");
 
     audioUrl = URL.createObjectURL(audioBlob);
-    audioPlayer.src = audioUrl;
 
     var xhr = new XMLHttpRequest();
     let formData = new FormData();
