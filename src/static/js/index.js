@@ -5,15 +5,15 @@ var input;     // MediaStreamAudioSourceNode we'll be recording
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext
     
-var audioPlayer = document.getElementById("audio-player");
-var audioPlayerContainer = document.getElementById("audio-player-container");
+var audioPlayer = document.getElementById('audio-player');
+var audioPlayerContainer = document.getElementById('audio-player-container');
 var recordButton = document.getElementsByClassName('record-button')[0];
 var stopButton = document.getElementsByClassName('stop-button')[0];
 var deleteButton = document.getElementsByClassName('delete-button')[0];
-var recordButtonContainer = document.getElementById("record-button-container");
+var recordButtonContainer = document.getElementById('record-button-container');
 var stopButtonContainer = document.getElementById('stop-button-container');
 
-var apiUrl  = document.getElementById('api_url').textContent;
+var apiUrl = document.getElementById('api_url').textContent;
 
 recordButton.addEventListener("click", startRecording);
 function startRecording() {
@@ -74,17 +74,18 @@ function stopRecording() {
     gumStream.getAudioTracks()[0].stop();
 
     // create the wav blob and pass it to a callback function
-    rec.exportWAV(buildAudioPlayer);
+    rec.exportWAV(showAudioPlayer);
 
     // show the audio player
     audioPlayerContainer.style.display = "block";
 }
 
-function buildAudioPlayer(audioBlob) {
+function showAudioPlayer(audioBlob) {
 
     console.log("building audioPlayer...");
 
     audioUrl = URL.createObjectURL(audioBlob);
+    audioPlayer.src = audioUrl;
 
     var xhr = new XMLHttpRequest();
     let formData = new FormData();
@@ -123,6 +124,8 @@ function deleteRecording() {
     console.log("deleteButton clicked");
 
     recordButton.disabled = false;
+
+    audioPlayer.src = '';
     
     audioPlayerContainer.style.display  = "none";
     recordButtonContainer.style.display = "block";
@@ -159,13 +162,28 @@ function setTempoText() {
 };
 
 function calculateFormantMultiplier() {
-    return Math.pow(10, formantSlider.value / 100).toFixed(2);
+    // slider goes from [-100, 100], map that to [-1, 1]
+    var val = formantSlider.value / 100
+    var powBase = 2;
+    var max = 4; // min is 1/max
+    var rangeMultiplier = Math.pow(max, 1/powBase);
+    return Math.pow(powBase, val * rangeMultiplier).toFixed(2);
 }
 
 function calculatePitchMultiplier() {
-    return Math.pow(10, pitchSlider.value / 100).toFixed(2);
+    // slider goes from [-100, 100], map that to [-1, 1]
+    var val = formantSlider.value / 100
+    var powBase = 2;
+    var max = 4; // min is 1/max
+    var rangeMultiplier = Math.pow(max, 1/powBase);
+    return Math.pow(powBase, val * rangeMultiplier).toFixed(2);
 }
 
 function calculateTempoMultiplier() {
-    return Math.pow(10, tempoSlider.value / 100).toFixed(2);
+    // slider goes from [-100, 100], map that to [-1, 1]
+    var val = formantSlider.value / 100
+    var powBase = 2;
+    var max = 3; // min is 1/max
+    var rangeMultiplier = Math.pow(max, 1/powBase);
+    return Math.pow(powBase, val * rangeMultiplier).toFixed(2);
 }

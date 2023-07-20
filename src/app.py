@@ -12,7 +12,7 @@ import soundfile as sf
 from flask import Flask, send_file, render_template, request
 from flask_cors import CORS
 
-# import helium_lib.modify_audio
+import helium_lib
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -46,14 +46,13 @@ def modify_audio():
 
     audio, sr = librosa.load(incoming_audio_path, sr=None)
 
-    sr = sr * 2
-    # audio = helium_lib.modify_audio.modify_audio(
-    #     audio,
-    #     sr,
-    #     formant_multiplier = formant_multiplier,
-    #     pitch_multiplier = pitch_multiplier,
-    #     tempo_multiplier = tempo_multiplier,
-    # )
+    audio = helium_lib.modify_audio(
+        audio,
+        sr,
+        formant_multiplier = formant_multiplier,
+        pitch_multiplier = pitch_multiplier,
+        tempo_multiplier = tempo_multiplier,
+    )
 
     sf.write(file=outgoing_audio_path, data=audio, samplerate=sr)
 
@@ -77,13 +76,16 @@ if __name__ == "__main__":
     parser.add_argument('--api_url', type=str, default='http://localhost:5000/api')
     args = parser.parse_args()
     
+    app.config['api_url'] = args.api_url
+
+    app.run(debug=True)
+
     # I'm having some issue setting up HTTPS
     # Browsers only want to open the microphone of the user for HTTPS websites (or localhost), not for HTTP
     # In order to support HTTPS, you need a certificate and a key
     # See https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https/page/3 for details
     # Using the 'simple' options below you can get some HTTPS-like behaviour, but with a drawback:
     # The user has to click through a warning that the certificate is not valid
-
 
     # adhoc keys are generated on the fly, the user must tell the browser to trust this site every time
     ssl_context = 'adhoc'
@@ -92,7 +94,4 @@ if __name__ == "__main__":
     # # generate self-certified keys with `openssl req -x509 -newkey rsa:4096 -nodes -out keys/cert.pem -keyout keys/key.pem -days 365`
     # ssl_context = ('keys/cert.pem', 'keys/key.pem') 
 
-    # app.run(host="0.0.0.0", ssl_context=ssl_context)
-
-    app.config['api_url'] = args.api_url
-    app.run(debug=True)
+    app.run(host="0.0.0.0", ssl_context=ssl_context)
